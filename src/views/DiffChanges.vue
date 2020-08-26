@@ -4,16 +4,28 @@
     <select v-model="activeSymbol">
       <option v-for="symbol in symbols" :key="symbol">{{ symbol }}</option>
     </select>
-    <Loader v-if="loading"/>
+    <Loader v-if="loading" />
     <ul class="list" v-else>
       <li class="list__item">Symbol: {{ info.s }}</li>
-      <hr>
+      <hr />
       <li class="list__item">Event type: {{ info.e }}</li>
-      <li class="list__item">Event time: {{ info.E }}</li>
-      <hr>
+      <li class="list__item">
+        Event time:
+        {{
+          new Intl.DateTimeFormat("ru-RU", {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+          }).format(new Date(info.E))
+        }}
+      </li>
+      <hr />
       <li class="list__item">First update ID in event: {{ info.U }}</li>
       <li class="list__item">Final update ID in event: {{ info.u }}</li>
-      <hr>
+      <hr />
       <li class="list__item">Bids to be updated: {{ info.b.length }}</li>
       <li class="list__item">Asks to be updated: {{ info.a.length }}</li>
     </ul>
@@ -26,8 +38,8 @@ export default {
   data: () => ({
     symbols: ["BTCUSDT", "BNBBTC", "ETHBTC"],
     activeSymbol: "BTCUSDT",
-    info: null,
-    loading: true
+    info: {},
+    loading: true,
   }),
   watch: {
     activeSymbol(symbol) {
@@ -35,16 +47,16 @@ export default {
     },
   },
   async mounted() {
-    await this.$bus.$on("socketData", data => {     // прослушиваем событие из шины данных
+    await this.$bus.$on("socketData", (data) => {
+      // прослушиваем событие из шины данных
       this.info = data;
-      this.loading = false
+      this.loading = false;
     });
   },
 };
 </script>
 
 <style lang="scss" scoped>
-
 .active-symbol {
   text-align: center;
   margin: 0 auto;
@@ -53,7 +65,7 @@ export default {
   height: 30px;
   padding: 0 30px;
   border-radius: 0 0 10px 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   font-size: 20px;
   font-weight: 600;
 }
@@ -85,20 +97,20 @@ option {
 }
 @media (max-width: 767px) {
   .list {
-  margin: 0 30px;
-  font-size: 20px;
-  &__item {
-    padding: 5px;
+    margin: 0 30px;
+    font-size: 20px;
+    &__item {
+      padding: 5px;
+    }
   }
-}
 }
 @media (max-width: 480px) {
   .list {
-  margin: 0 10px;
-  font-size: 18px;
-  &__item {
-    padding: 5px;
+    margin: 0 10px;
+    font-size: 18px;
+    &__item {
+      padding: 5px;
+    }
   }
-}
 }
 </style>
